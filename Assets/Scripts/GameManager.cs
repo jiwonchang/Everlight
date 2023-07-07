@@ -8,7 +8,7 @@ public class GameManager : MonoBehaviour
     public static GameManager instance;
     public CharacterStats[] playerStats;
 
-    public bool gameMenuOpen, dialogActive, fadingBetweenAreas, shopActive;
+    public bool gameMenuOpen, dialogActive, fadingBetweenAreas, shopActive, battleActive;
 
     public string[] itemsHeld;
     public int[] numberOfItems;
@@ -47,7 +47,7 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         // disable/enable player movement based on a few conditions
-        if (gameMenuOpen || dialogActive || fadingBetweenAreas || shopActive)
+        if (gameMenuOpen || dialogActive || fadingBetweenAreas || shopActive || battleActive)
         {
             PlayerController.instance.canMove = false;
         } else
