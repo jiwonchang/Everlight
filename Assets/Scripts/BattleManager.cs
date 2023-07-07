@@ -20,6 +20,12 @@ public class BattleManager : MonoBehaviour
     // using a list, we get rid of this concern. this is because lists can have dynamic / flexible lengths
     public List<BattleChar> activeCombatants = new List<BattleChar>();
 
+    // keep track of whose turn it is
+    public int currentTurn;
+    // to be used while we're waiting for a turn to end (either waiting for input from player, or for enemy to execute their turn)
+    public bool turnWaiting;
+    public GameObject uiButtonsHolder;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -34,6 +40,32 @@ public class BattleManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.T))
         {
             BattleStart(new string[] { "Eyeball", "Spider", "Skeleton" });
+        }
+
+        // handle what should happen at every turn
+        if (battleActive)
+        {
+            if (turnWaiting)
+            {
+                // if player's turn, display battle menu buttons
+                if (activeCombatants[currentTurn].isPlayer)
+                {
+                    uiButtonsHolder.SetActive(true);
+                } else
+                {
+                    // if not player, hide the buttons
+                    uiButtonsHolder.SetActive(false);
+
+                    // enemy should attack (or otherwise execute their turn)
+                    StartCoroutine(EnemyMoveCoroutine());
+                }
+            }
+
+            // for testing purposes
+            if (Input.GetKeyDown(KeyCode.N))
+            {
+                NextTurn();
+            }
         }
     }
 
@@ -102,6 +134,103 @@ public class BattleManager : MonoBehaviour
                     }
                 }
             }
+
+            // when the battle starts, we should immediately have it be someone's turn
+            turnWaiting = true;
+            // currentTurn = 0;
+            currentTurn = Random.Range(0, activeCombatants.Count); // just for testing purposes, pick randomly
         }
+    }
+
+    public void NextTurn()
+    {
+        currentTurn++;
+        if (currentTurn >= activeCombatants.Count)
+        {
+            currentTurn = 0;
+        }
+
+        turnWaiting = true;
+        // as we go to next turn, update the battle information
+        UpdateBattle();
+    }
+
+    // whenever we go to next turn, we should confirm that the battle should still continue (e.g., both sides are still not defeated)
+    // also, we should update any information to be displayed
+    public void UpdateBattle()
+    {
+        bool allEnemiesDead = true;
+        bool allPlayersDead = true;
+
+        for (int i = 0; i < activeCombatants.Count; i++)
+        {
+            // first, check that none of the active combatants have any weird stat values (e.g., health below 0)
+            if (activeCombatants[i].currentHP < 0)
+            {
+                activeCombatants[i].currentHP = 0;
+            }
+
+            // handle dead combatants
+            if (activeCombatants[i].currentHP == 0)
+            {
+                // nothing for now
+            } else
+            {
+                if (activeCombatants[i].isPlayer)
+                {
+                    allPlayersDead = false;
+                } else
+                {
+                    allEnemiesDead = false;
+                }
+            }
+        }
+
+        // if either side is completely defeated, handle battle end
+        if (allEnemiesDead || allPlayersDead)
+        {
+            if (allEnemiesDead)
+            {
+                // end battle in victory
+            } else
+            {
+                // end battle in defeat
+            }
+
+            battleScene.SetActive(false);
+            GameManager.instance.battleActive = false;
+            battleActive = false;
+        }
+    }
+
+    // note: a coroutine (ienumerator) is something that can happen outside the normal order of things in Unity.
+    // e.g., can run without completely blocking Unity's other processes
+    public IEnumerator EnemyMoveCoroutine()
+    {
+        turnWaiting = false;
+        // wait 1 second
+        yield return new WaitForSeconds(1f);
+        // then, call enemy attack function
+        EnemyAttack();
+        // then, wait 1 second
+        yield return new WaitForSeconds(1f);
+        NextTurn();
+    }
+
+    public void EnemyAttack()
+    {
+        // first, pick which player to attack
+        List<int> players = new List<int>();
+        for (int i = 0; i < activeCombatants.Count; i++)
+        {
+            if (activeCombatants[i].isPlayer && activeCombatants[i].currentHP > 0)
+            {
+                players.Add(i);
+            }
+        }
+        int selectedTarget = players[Random.Range(0, players.Count)]; // for now, choose among players randomly
+        
+        // second, apply damage to the targeted player
+        activeCombatants[selectedTarget].currentHP -= 30;
     }
 }

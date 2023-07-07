@@ -530,6 +530,9 @@ MonoBehaviour:
   - {fileID: 9171475467021912664, guid: 312ef45cbca7a244ebc233fdd30297f6, type: 3}
   - {fileID: 330312739226572645, guid: b84f4141153987f44aeb78b509bf5621, type: 3}
   activeCombatants: []
+  currentTurn: 0
+  turnWaiting: 0
+  uiButtonsHolder: {fileID: 611274544}
 --- !u!4 &241372542
 Transform:
   m_ObjectHideFlags: 0
