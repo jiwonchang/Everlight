@@ -550,6 +550,7 @@ MonoBehaviour:
     movePower: 85
     moveCost: 10
     moveEffect: {fileID: 7488912169684367071, guid: d08236a6b16096f4b976a27e09c0910e, type: 3}
+  enemyAttackEffect: {fileID: 4752236878576675165, guid: f69c084e082931f4ead8ddbcad6fd447, type: 3}
 --- !u!4 &241372542
 Transform:
   m_ObjectHideFlags: 0

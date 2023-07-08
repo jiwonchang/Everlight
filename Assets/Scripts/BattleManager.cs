@@ -28,6 +28,8 @@ public class BattleManager : MonoBehaviour
 
     public BattleMove[] movesList;
 
+    public GameObject enemyAttackEffect; // enemy turn indicator; shows whose turn it is that is attacking
+
     // Start is called before the first frame update
     void Start()
     {
@@ -247,6 +249,8 @@ public class BattleManager : MonoBehaviour
                 movePower = movesList[i].movePower;
             }
         }
+
+        Instantiate(enemyAttackEffect, activeCombatants[currentTurn].transform.position, activeCombatants[currentTurn].transform.rotation);
 
         DealDamage(selectedTarget, movePower);
     }
