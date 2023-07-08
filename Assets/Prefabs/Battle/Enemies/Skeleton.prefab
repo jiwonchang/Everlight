@@ -98,7 +98,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isPlayer: 0
-  movesAvailable: []
+  movesAvailable:
+  - Slash
+  - Fire
   charName: Skeleton
   currentHP: 150
   maxHP: 250
@@ -106,6 +108,6 @@ MonoBehaviour:
   maxMP: 0
   strength: 5
   defense: 5
-  wpnPower: 5
+  weaponPower: 0
   armorPower: 5
   hasDied: 0
