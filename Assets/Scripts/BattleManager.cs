@@ -235,6 +235,7 @@ public class BattleManager : MonoBehaviour
         // second, apply damage to the targeted player
         // activeCombatants[selectedTarget].currentHP -= 30;
 
+        int movePower = 0;
         // at least for now, pick a random move out of the moves available
         int selectAttack = Random.Range(0, activeCombatants[currentTurn].movesAvailable.Length);
         for (int i = 0; i < movesList.Length; i++)
@@ -243,7 +244,27 @@ public class BattleManager : MonoBehaviour
             {
                 // spawn the attack effect where the selected attack target is
                 Instantiate(movesList[i].moveEffect, activeCombatants[selectedTarget].transform.position, activeCombatants[selectedTarget].transform.rotation);
+                movePower = movesList[i].movePower;
             }
+        }
+
+        DealDamage(selectedTarget, movePower);
+    }
+
+    public void DealDamage(int target, int movePower)
+    {
+        float attackPower = activeCombatants[currentTurn].strength + activeCombatants[currentTurn].weaponPower;
+        float defensePower = activeCombatants[target].defense + activeCombatants[target].armorPower;
+
+        float damageCalculation = (attackPower / defensePower) * movePower * Random.Range(0.9f, 1.1f);
+        int damageToGive = Mathf.RoundToInt(damageCalculation);
+
+        Debug.Log(activeCombatants[currentTurn].charName + " is dealing " + damageCalculation + " (" + damageToGive + ") points of damage to " + activeCombatants[target].charName);
+
+        activeCombatants[target].currentHP -= damageToGive;
+        if (activeCombatants[target].currentHP < 0)
+        {
+            activeCombatants[target].currentHP = 0;
         }
     }
 }
