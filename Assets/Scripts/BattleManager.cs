@@ -211,6 +211,16 @@ public class BattleManager : MonoBehaviour
             battleScene.SetActive(false);
             GameManager.instance.battleActive = false;
             battleActive = false;
+        } else // even if battle is not over, make sure that only live combatants get turns
+        {
+            while (activeCombatants[currentTurn].currentHP == 0)
+            {
+                currentTurn++; // skip to next turn, as long as we encounter dead combatants
+                if (currentTurn >= activeCombatants.Count)
+                {
+                    currentTurn = 0;
+                }
+            }
         }
     }
 
