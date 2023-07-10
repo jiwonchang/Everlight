@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class BattleManager : MonoBehaviour
 {
@@ -27,8 +28,11 @@ public class BattleManager : MonoBehaviour
     public GameObject uiButtonsHolder;
 
     public BattleMove[] movesList;
-
     public GameObject enemyAttackEffect; // enemy turn indicator; shows whose turn it is that is attacking
+    
+    public DamageNumber damageNumberDisplay;
+
+    public Text[] playerName, playerHP, playerMP;
 
     // Start is called before the first frame update
     void Start()
@@ -143,6 +147,8 @@ public class BattleManager : MonoBehaviour
             turnWaiting = true;
             // currentTurn = 0;
             currentTurn = Random.Range(0, activeCombatants.Count); // just for testing purposes, pick randomly
+        
+            UpdateUIStats();
         }
     }
 
@@ -157,6 +163,7 @@ public class BattleManager : MonoBehaviour
         turnWaiting = true;
         // as we go to next turn, update the battle information
         UpdateBattle();
+        UpdateUIStats();
     }
 
     // whenever we go to next turn, we should confirm that the battle should still continue (e.g., both sides are still not defeated)
@@ -269,6 +276,35 @@ public class BattleManager : MonoBehaviour
         if (activeCombatants[target].currentHP < 0)
         {
             activeCombatants[target].currentHP = 0;
+        }
+
+        // display the damage being done to the target
+        Instantiate(damageNumberDisplay, activeCombatants[target].transform.position, activeCombatants[target].transform.rotation).SetDamage(damageToGive);
+        UpdateUIStats();
+    }
+
+    public void UpdateUIStats()
+    {
+        for (int i = 0; i < playerName.Length; i++)
+        {
+            if (activeCombatants.Count > i)
+            {
+                if (activeCombatants[i].isPlayer)
+                {
+                    BattleChar playerData = activeCombatants[i];
+
+                    playerName[i].gameObject.SetActive(true);
+                    playerName[i].text = playerData.charName;
+                    playerHP[i].text = Mathf.Clamp(playerData.currentHP, 0, int.MaxValue) + "/" + playerData.maxHP;
+                    playerMP[i].text = Mathf.Clamp(playerData.currentMP, 0, int.MaxValue) + "/" + playerData.maxMP;
+                } else
+                {
+                    playerName[i].gameObject.SetActive(false);
+                }
+            } else
+            {
+                playerName[i].gameObject.SetActive(false);
+            }
         }
     }
 }
