@@ -36,6 +36,9 @@ public class BattleMagicSelect : MonoBehaviour
         } else
         {
             // let player know they don't have enough MP for the spell
+            BattleManager.instance.battleNotice.theText.text = "Not Enough MP!";
+            BattleManager.instance.battleNotice.Activate();
+            BattleManager.instance.magicMenu.SetActive(false);
         }
     }
 }
